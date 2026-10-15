@@ -9,10 +9,10 @@ public class StageMove : MonoBehaviour
         moveInput = InputSystem.actions.FindAction("Move");    
     }
 
+    public float threshold = 1.0f;
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log(moveInput.ReadValue<Vector2>());
 
         //this.transform.localPositionはこのコードがアタッチメントされているゲームオブジェクトの位置情報
         //このゲームオブジェクトの今のtransformのpositionは　このゲームオブジェクトの今のtransformのposition + (Vector3)moveInput.ReadValue<Vector2>()
@@ -27,7 +27,6 @@ public class StageMove : MonoBehaviour
         //Vector3 (x, y, z)
 
         //動きの値が大きすぎるとUnityの物理演算が追いつかないのでゲームオブジェクト同士がすり抜ける　閾値を掛ける
-        float threshold = 0.2f;
 
         //rotation = new Vector3(moveInput.ReadValue<Vector2>().x, 0, moveInput.ReadValue<Vector2>().y);   この操作方法キモイので変えた
         //直感内容操作
@@ -35,6 +34,9 @@ public class StageMove : MonoBehaviour
         rotation = new Vector3(moveInput.ReadValue<Vector2>().y * threshold, 0, moveInput.ReadValue<Vector2>().x * threshold);
 
 
-        this.transform.Rotate(rotation);
+        //this.transform.Rotate(rotation);
+        Quaternion tilt = Quaternion.Euler(rotation.x, 0f, rotation.z);
+        this.gameObject.GetComponent<Rigidbody>().MoveRotation(this.gameObject.GetComponent<Rigidbody>().transform.rotation * tilt);    //今の回転this.gameObject.GetComponent<Rigidbody>().transform.rotation * tiltを関数MoveRotationに処理させる
+
     }
 }
